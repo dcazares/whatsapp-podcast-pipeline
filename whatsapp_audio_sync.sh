@@ -1,5 +1,5 @@
 #!/bin/bash
-source /Users/dcazares/scripts/whatsapp-podcast-pipeline/.env
+source "$(dirname "$0")/.env"
 
 SOURCE="/Users/dcazares/Library/Group Containers/group.net.whatsapp.WhatsApp.shared/Message/Media"
 DEST="/Users/dcazares/Desktop/WhatsApp Audio"
@@ -38,4 +38,4 @@ fi
 touch ~/.whatsapp_audio_last_run
 
 # Auto-summarize new podcast transcripts
-node /Users/dcazares/scripts/dad-podcasts/backfill.js
+/opt/homebrew/bin/node /Users/dcazares/personal-projects/dad-podcasts/backfill.js
