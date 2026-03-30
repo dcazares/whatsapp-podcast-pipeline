@@ -32,7 +32,7 @@ function cleanTranscript(text) {
 
 async function summarize(transcript, filename) {
   const stats = fs.statSync(path.join(TRANSCRIPTS_DIR, filename.replace('_summary.txt', '.txt')));
-  const date = new Date(stats.mtime).toLocaleDateString('en-US', { 
+  const date = new Date(stats.birthtime).toLocaleDateString('en-US', { 
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
   });
 
