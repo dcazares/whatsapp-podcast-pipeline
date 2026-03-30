@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Archivo de Bolito</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf7f2;
+    --bg-card: #ffffff;
+    --text-primary: #1a1208;
+    --text-secondary: #5c4f38;
+    --text-muted: #9c8e78;
+    --accent: #8b3a1a;
+    --accent-light: #f0e6dc;
+    --accent-mid: #c4622a;
+    --border: #e8e0d4;
+    --border-strong: #c8bfb0;
+    --tag-gastro-bg: #fef3e8;
+    --tag-gastro: #7a4010;
+    --tag-cine-bg: #eef1f8;
+    --tag-cine: #1e3a6e;
+    --tag-historia-bg: #edf5ee;
+    --tag-historia: #1a4a20;
+    --tag-ciencia-bg: #f5eef8;
+    --tag-ciencia: #4a1a6e;
+    --tag-mundo-bg: #f8eef0;
+    --tag-mundo: #6e1a2e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    font-size: 18px;
+    line-height: 1.7;
+  }
+
+  /* HEADER */
+  header {
+    border-bottom: 1px solid var(--border-strong);
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+    background: var(--bg);
+    position: relative;
+  }
+
+  .header-eyebrow {
+    font-family: 'Crimson Pro', serif;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: 400;
+    color: var(--text-primary);
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+  }
+
+  header h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .header-sub {
+    font-size: 17px;
+    color: var(--text-secondary);
+    max-width: 480px;
+    margin: 0 auto 1.5rem;
+    font-style: italic;
+  }
+
+  .header-meta {
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* NAV / FILTER */
+  .filter-bar {
+    padding: 1.25rem 2rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .filter-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-right: 0.25rem;
+  }
+
+  .filter-btn {
+    font-family: 'Crimson Pro', serif;
+    font-size: 14px;
+    padding: 0.3rem 0.85rem;
+    border-radius: 20px;
+    border: 1px solid var(--border-strong);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .filter-btn:hover { border-color: var(--accent-mid); color: var(--accent); }
+  .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .search-wrap {
+    margin-left: auto;
+    position: relative;
+  }
+
+  .search-wrap input {
+    font-family: 'Crimson Pro', serif;
+    font-size: 15px;
+    padding: 0.3rem 0.85rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 20px;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    width: 180px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .search-wrap input:focus { border-color: var(--accent-mid); }
+  .search-wrap input::placeholder { color: var(--text-muted); }
+
+  /* MAIN LAYOUT */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  /* EPISODE LIST */
+  .episodes { display: flex; flex-direction: column; gap: 0; }
+
+  .episode-card {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 0 1.5rem;
+    padding: 1.75rem 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.1s;
+    border-radius: 4px;
+  }
+
+  .episode-card:hover { background: var(--accent-light); margin: 0 -1rem; padding: 1.75rem 1rem; }
+  .episode-card:first-child { border-top: 1px solid var(--border); }
+
+  .ep-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--border-strong);
+    line-height: 1;
+    padding-top: 0.2rem;
+    text-align: right;
+  }
+
+  .ep-content {}
+
+  .ep-tags {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+  }
+
+  .tag {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.6rem;
+    border-radius: 12px;
+    font-family: 'Crimson Pro', serif;
+    font-weight: 600;
+  }
+
+  .tag-gastro { background: var(--tag-gastro-bg); color: var(--tag-gastro); }
+  .tag-cine { background: var(--tag-cine-bg); color: var(--tag-cine); }
+  .tag-historia { background: var(--tag-historia-bg); color: var(--tag-historia); }
+  .tag-ciencia { background: var(--tag-ciencia-bg); color: var(--tag-ciencia); }
+  .tag-mundo { background: var(--tag-mundo-bg); color: var(--tag-mundo); }
+
+  .ep-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    line-height: 1.3;
+    margin-bottom: 0.4rem;
+  }
+
+  .ep-title:hover { color: var(--accent); }
+
+  .ep-summary {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin-bottom: 0.6rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .ep-date {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .no-results {
+    padding: 3rem 0;
+    color: var(--text-muted);
+    font-style: italic;
+    text-align: center;
+  }
+
+  /* SIDEBAR */
+  aside {
+    position: sticky;
+    top: 80px;
+  }
+
+  .aside-block {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .aside-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 15px;
+  }
+
+  .stat-row:last-child { border-bottom: none; }
+  .stat-label { color: var(--text-secondary); }
+  .stat-value { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--accent); }
+
+  .series-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 0;
+    font-size: 15px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .series-item:last-child { border-bottom: none; }
+  .series-name { color: var(--text-secondary); }
+  .series-count {
+    font-size: 12px;
+    background: var(--accent-light);
+    color: var(--accent);
+    padding: 0.1rem 0.5rem;
+    border-radius: 10px;
+  }
+
+  .about-text {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    font-style: italic;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 18, 8, 0.6);
+    z-index: 100;
+    overflow-y: auto;
+    padding: 2rem 1rem;
+  }
+
+  .modal-overlay.open { display: flex; align-items: flex-start; justify-content: center; }
+
+  .modal {
+    background: var(--bg);
+    border-radius: 12px;
+    max-width: 720px;
+    width: 100%;
+    padding: 2.5rem;
+    position: relative;
+    margin: auto;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    background: none;
+    border: 1px solid var(--border-strong);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .modal-close:hover { background: var(--accent-light); color: var(--accent); border-color: var(--accent-mid); }
+
+  .modal-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .modal-date {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 1.5rem;
+  }
+
+  .modal-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.5rem 0;
+  }
+
+  .modal-section-title {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .modal-summary {
+    font-size: 17px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin-bottom: 1rem;
+  }
+
+  .lang-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .lang-tab {
+    font-family: 'Crimson Pro', serif;
+    font-size: 14px;
+    padding: 0.25rem 0.75rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-strong);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .lang-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .summary-content { display: none; }
+  .summary-content.active { display: block; }
+
+  .transcript-toggle {
+    font-family: 'Crimson Pro', serif;
+    font-size: 15px;
+    color: var(--accent-mid);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .transcript-body {
+    display: none;
+    margin-top: 1rem;
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    border-left: 3px solid var(--accent-light);
+    padding-left: 1.25rem;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .transcript-body.open { display: block; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    main { grid-template-columns: 1fr; }
+    aside { position: static; }
+    .episode-card { grid-template-columns: 40px 1fr; gap: 0 1rem; }
+    .ep-number { font-size: 1.4rem; }
+    header { padding: 2rem 1.5rem 1.5rem; }
+    .filter-bar { padding: 1rem 1.5rem; }
+    .search-wrap { margin-left: 0; width: 100%; }
+    .search-wrap input { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="header-eyebrow">Una colección familiar</p>
+  <h1>El Archivo de <em>Bolito</em></h1>
+  <p class="header-sub">Episodios semanales de historia, cultura y gastronomía mexicana — compartidos con amor desde Monterrey.</p>
+  <p class="header-meta" id="header-count">Cargando episodios...</p>
+</header>
+
+<div class="filter-bar">
+  <span class="filter-label">Tema</span>
+  <button class="filter-btn active" data-filter="all">Todos</button>
+  <button class="filter-btn" data-filter="gastro">Gastronomía</button>
+  <button class="filter-btn" data-filter="cine">Cine</button>
+  <button class="filter-btn" data-filter="historia">Historia</button>
+  <button class="filter-btn" data-filter="ciencia">Ciencia</button>
+  <button class="filter-btn" data-filter="mundo">Mundo</button>
+  <div class="search-wrap">
+    <input type="text" id="search" placeholder="Buscar episodios..." />
+  </div>
+</div>
+
+<main>
+  <section class="episodes" id="episode-list"></section>
+
+  <aside>
+    <div class="aside-block">
+      <h3 class="aside-title">El archivo</h3>
+      <div class="stat-row">
+        <span class="stat-label">Episodios</span>
+        <span class="stat-value" id="stat-episodes">—</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Idiomas</span>
+        <span class="stat-value">2</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Desde</span>
+        <span class="stat-value" id="stat-since">—</span>
+      </div>
+    </div>
+
+    <div class="aside-block">
+      <h3 class="aside-title">Series</h3>
+      <div id="series-list"></div>
+    </div>
+
+    <div class="aside-block">
+      <h3 class="aside-title">Sobre este archivo</h3>
+      <p class="about-text">Cada semana, el abuelo comparte un episodio de historia, gastronomía y cultura con su familia por WhatsApp. Este sitio preserva esos momentos — transcritos, resumidos y traducidos — para que nunca se pierdan.</p>
+    </div>
+  </aside>
+</main>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal-content">
+    <button class="modal-close" id="modal-close">✕</button>
+    <p class="modal-eyebrow" id="modal-eyebrow">Episodio</p>
+    <h2 class="modal-title" id="modal-title"></h2>
+    <p class="modal-date" id="modal-date"></p>
+    <div id="modal-tags"></div>
+    <hr class="modal-divider">
+    <p class="modal-section-title">Resumen</p>
+    <div class="lang-tabs">
+      <button class="lang-tab active" data-lang="es">Español</button>
+      <button class="lang-tab" data-lang="en">English</button>
+    </div>
+    <div class="summary-content active" id="summary-es"></div>
+    <div class="summary-content" id="summary-en"></div>
+    <hr class="modal-divider">
+    <button class="transcript-toggle" id="transcript-toggle">Leer transcripción completa</button>
+    <div class="transcript-body" id="transcript-body"></div>
+  </div>
+</div>
+
+<script>
+const episodes = [
+  {
+    id: 1,
+    title: "La Gastronomía Mexicana en la Época de la Revolución",
+    date: "Mar 2025",
+    tags: ["gastro"],
+    summaryEs: "Un recorrido por los cambios alimentarios que trajo la Revolución Mexicana, explorando cómo el conflicto armado transformó la cocina popular, el acceso a los alimentos y las tradiciones culinarias de principios del siglo XX.",
+    summaryEn: "A journey through the food changes brought by the Mexican Revolution, exploring how armed conflict transformed popular cooking, food access, and culinary traditions in the early 20th century.",
+    transcript: "Transcripción no disponible en esta vista previa. Consulta los archivos locales en ~/Desktop/Dad Podcasts/"
+  },
+  {
+    id: 2,
+    title: "Historia del Fútbol Soccer",
+    date: "Mar 2025",
+    tags: ["mundo"],
+    summaryEs: "El origen y evolución del fútbol soccer desde sus primeras versiones en Inglaterra hasta convertirse en el deporte más popular del mundo, con énfasis en su llegada e impacto en México.",
+    summaryEn: "The origin and evolution of soccer from its early forms in England to becoming the world's most popular sport, with emphasis on its arrival and impact in Mexico.",
+    transcript: "Transcripción no disponible en esta vista previa."
+  },
+  {
+    id: 3,
+    title: "Bares, Cantinas y Bebidas en la Historia de México",
+    date: "Mar 2025",
+    tags: ["gastro", "historia"],
+    summaryEs: "Exploración de la historia de los bares, cantinas y bebidas alcohólicas en México, desde el pulque prehispánico hasta la cerveza moderna. México es hoy el principal exportador de cerveza del mundo.",
+    summaryEn: "Exploration of the history of bars, cantinas, and alcoholic beverages in Mexico, from pre-Hispanic pulque to modern beer. Mexico is today the world's leading beer exporter.",
+    transcript: "Hola, buen día tengan todos ustedes. Hoy continuamos con el tema de la gastronomía mexicana, capítulo 14. Vamos a hablar sobre bares, cantinas y botanas, específicamente sobre las bebidas.\n\nLa cantina es un lugar para tomar bebidas alcohólicas. Ese es el principal objetivo: tomar bebidas alcohólicas, y se obsequia la botana. En cambio, un bar tiene como objetivo principal la comida.\n\nEn la época prehispánica, la bebida principal era el pulque, obtenido del maguey. El jugo que se obtiene se llama aguamiel, que fermenta en pocas horas generando alcohol. El pulque tiene entre 6 y 12 grados de alcohol.\n\nEn 1542 se establece la primera cervecera en Nueva España en Puebla. México actualmente consume 65 litros de cerveza por persona al año y es el principal exportador de cerveza en el mundo, superando a Bélgica, Holanda y Alemania.\n\nEn 1692 se encarecieron varios productos y la gente se rebeló. Quemaron el mercado del Parián y el Palacio Virreinal. Todo por el encarecimiento del pulque."
+  },
+  {
+    id: 4,
+    title: "Historia del Cine en México — Los Orígenes",
+    date: "Mar 2025",
+    tags: ["cine"],
+    summaryEs: "Los primeros años del cine en México, desde la llegada del cinematógrafo de los hermanos Lumière hasta las primeras producciones nacionales, explorando cómo el nuevo arte visual transformó la cultura mexicana.",
+    summaryEn: "The early years of cinema in Mexico, from the arrival of the Lumière brothers' cinematograph to the first national productions, exploring how the new visual art transformed Mexican culture.",
+    transcript: "Transcripción completa disponible en archivos locales."
+  },
+  {
+    id: 5,
+    title: "Historia del Cine en México — Del Cine Mudo a la Época de Oro",
+    date: "Mar 2025",
+    tags: ["cine"],
+    summaryEs: "La transición del cine mudo al sonoro en México y los inicios de lo que sería la legendaria Época de Oro del cine mexicano, con sus grandes estudios, directores y estrellas.",
+    summaryEn: "The transition from silent to sound film in Mexico and the beginnings of what would become the legendary Golden Age of Mexican cinema, with its great studios, directors, and stars.",
+    transcript: "Transcripción completa disponible en archivos locales."
+  },
+  {
+    id: 6,
+    title: "Historia del Cine en México — El Camino a la Época de Oro",
+    date: "Mar 2025",
+    tags: ["cine"],
+    summaryEs: "El período de consolidación del cine mexicano previo a su época de mayor esplendor, los directores pioneros y las condiciones que hicieron posible el florecimiento de una industria cinematográfica nacional.",
+    summaryEn: "The consolidation period of Mexican cinema before its greatest splendor, pioneer directors, and the conditions that made possible the flourishing of a national film industry.",
+    transcript: "Transcripción completa disponible en archivos locales."
+  },
+  {
+    id: 7,
+    title: "La Reina del Nilo — La Historia de Cleopatra",
+    date: "Mar 2025",
+    tags: ["historia", "mundo"],
+    summaryEs: "La fascinante vida de Cleopatra VII, última reina del Egipto ptolemaico, su inteligencia política, sus relaciones con Julio César y Marco Antonio, y su legado histórico más allá del mito.",
+    summaryEn: "The fascinating life of Cleopatra VII, last queen of Ptolemaic Egypt, her political intelligence, her relationships with Julius Caesar and Mark Antony, and her historical legacy beyond the myth.",
+    transcript: "Transcripción completa disponible en archivos locales."
+  },
+  {
+    id: 8,
+    title: "La Revolución Industrial y la Gastronomía Mexicana",
+    date: "Mar 2025",
+    tags: ["gastro", "historia"],
+    summaryEs: "Cómo la Revolución Industrial transformó la alimentación en México, los inventos que cambiaron la producción de alimentos y las empresas alimentarias que surgieron en esa época.",
+    summaryEn: "How the Industrial Revolution transformed food in Mexico, the inventions that changed food production, and the food companies that emerged during that era.",
+    transcript: "Transcripción completa disponible en archivos locales."
+  },
+  {
+    id: 9,
+    title: "Historia del Cine — Directores, Productores y Fotógrafos",
+    date: "Mar 2025",
+    tags: ["cine"],
+    summaryEs: "Los grandes artesanos detrás de cámara en el cine mexicano: directores visionarios, productores audaces y fotógrafos que dieron al cine nacional su distintivo estilo visual.",
+    summaryEn: "The great craftsmen behind the camera in Mexican cinema: visionary directors, bold producers, and photographers who gave national cinema its distinctive visual style.",
+    transcript: "Transcripción completa disponible en archivos locales."
+  },
+  {
+    id: 10,
+    title: "La Historia de Alfred Nobel y los Premios Nobel",
+    date: "Mar 2025",
+    tags: ["ciencia", "mundo"],
+    summaryEs: "La vida del inventor sueco Alfred Nobel, el descubrimiento de la dinamita y sus consecuencias, y la historia detrás de la creación de los premios más prestigiosos del mundo.",
+    summaryEn: "The life of Swedish inventor Alfred Nobel, the discovery of dynamite and its consequences, and the story behind the creation of the world's most prestigious prizes.",
+    transcript: "Transcripción completa disponible en archivos locales."
+  },
+  {
+    id: 11,
+    title: "Actrices Extranjeras en la Época de Oro del Cine Mexicano",
+    date: "Mar 2025",
+    tags: ["cine"],
+    summaryEs: "Las actrices extranjeras que encontraron en México un hogar artístico durante la Época de Oro, sus contribuciones al cine nacional y las historias de sus vidas en el país.",
+    summaryEn: "The foreign actresses who found an artistic home in Mexico during the Golden Age, their contributions to national cinema, and the stories of their lives in the country.",
+    transcript: "Transcripción completa disponible en archivos locales."
+  },
+  {
+    id: 12,
+    title: "Tradiciones Navideñas en México — De Huitzilopochtli a Santa Claus",
+    date: "Mar 2025",
+    tags: ["historia", "gastro"],
+    summaryEs: "El fascinante sincretismo de las tradiciones navideñas mexicanas, desde sus raíces prehispánicas hasta la influencia norteamericana del siglo XX, pasando por las posadas y el nacimiento.",
+    summaryEn: "The fascinating syncretism of Mexican Christmas traditions, from their pre-Hispanic roots to 20th century North American influence, through posadas and the nativity scene.",
+    transcript: "Transcripción completa disponible en archivos locales."
+  },
+  {
+    id: 13,
+    title: "Bares, Restaurantes y Botanas — Gastronomía Mexicana Cap. 15",
+    date: "Mar 2025",
+    tags: ["gastro"],
+    summaryEs: "Continuación de la serie sobre gastronomía mexicana, explorando la evolución de los restaurantes, las botanas y la cultura de socializar en torno a la comida en México.",
+    summaryEn: "Continuation of the Mexican gastronomy series, exploring the evolution of restaurants, snacks, and the culture of socializing around food in Mexico.",
+    transcript: "Transcripción completa disponible en archivos locales."
+  },
+  {
+    id: 14,
+    title: "Médicos Famosos en la Historia de México",
+    date: "Mar 2025",
+    tags: ["historia", "ciencia"],
+    summaryEs: "Un recorrido por las figuras médicas más destacadas de la historia mexicana, sus descubrimientos, aportaciones a la salud pública y el impacto de su trabajo en la sociedad.",
+    summaryEn: "A journey through the most outstanding medical figures in Mexican history, their discoveries, contributions to public health, and the impact of their work on society.",
+    transcript: "Transcripción completa disponible en archivos locales."
+  },
+  {
+    id: 15,
+    title: "Grandes Enfermeras en la Historia de México",
+    date: "Mar 2025",
+    tags: ["historia", "ciencia"],
+    summaryEs: "Las mujeres que dedicaron su vida al cuidado de los enfermos en México, desde la época colonial hasta el siglo XX, y su contribución fundamental al sistema de salud nacional.",
+    summaryEn: "The women who dedicated their lives to caring for the sick in Mexico, from the colonial era to the 20th century, and their fundamental contribution to the national health system.",
+    transcript: "Transcripción completa disponible en archivos locales."
+  },
+  {
+    id: 16,
+    title: "Actores y Directores Extranjeros en la Época de Oro",
+    date: "Mar 2025",
+    tags: ["cine"],
+    summaryEs: "Los artistas extranjeros que enriquecieron el cine mexicano durante su época de mayor esplendor, trayendo consigo técnicas, estilos y perspectivas que se fusionaron con el talento local.",
+    summaryEn: "The foreign artists who enriched Mexican cinema during its greatest splendor, bringing with them techniques, styles, and perspectives that merged with local talent.",
+    transcript: "Transcripción completa disponible en archivos locales."
+  },
+  {
+    id: 17,
+    title: "La Vida de Nikola Tesla",
+    date: "Mar 2025",
+    tags: ["ciencia", "mundo"],
+    summaryEs: "La extraordinaria y trágica vida del inventor serbio-estadounidense Nikola Tesla, sus revolucionarios descubrimientos en electricidad y electromagnetismo, y su rivalidad con Thomas Edison.",
+    summaryEn: "The extraordinary and tragic life of Serbian-American inventor Nikola Tesla, his revolutionary discoveries in electricity and electromagnetism, and his rivalry with Thomas Edison.",
+    transcript: "Transcripción completa disponible en archivos locales."
+  },
+  {
+    id: 18,
+    title: "Pedro Moreno y Javier Mina — Unidos hasta la Muerte",
+    date: "Mar 2025",
+    tags: ["historia"],
+    summaryEs: "La historia de la improbable alianza entre el guerrillero mexicano Pedro Moreno y el español Javier Mina, unidos por la causa de la independencia mexicana y caídos juntos en combate.",
+    summaryEn: "The story of the unlikely alliance between Mexican guerrilla Pedro Moreno and Spaniard Javier Mina, united by the cause of Mexican independence and fallen together in battle.",
+    transcript: "Transcripción completa disponible en archivos locales."
+  },
+  {
+    id: 19,
+    title: "Historia del Cine — Pedro Armendáriz y Cantinflas",
+    date: "Mar 2025",
+    tags: ["cine"],
+    summaryEs: "Las vidas y carreras de dos gigantes del cine mexicano: Pedro Armendáriz, el galán dramático de alcance internacional, y Cantinflas, el cómico que conquistó el corazón del pueblo.",
+    summaryEn: "The lives and careers of two giants of Mexican cinema: Pedro Armendáriz, the dramatic leading man of international reach, and Cantinflas, the comedian who conquered the people's hearts.",
+    transcript: "Transcripción completa disponible en archivos locales."
+  },
+  {
+    id: 20,
+    title: "La Gastronomía Mexicana en el Porfiriato",
+    date: "Mar 2025",
+    tags: ["gastro", "historia"],
+    summaryEs: "La transformación de la cocina mexicana durante el Porfiriato, la influencia francesa en la alta cocina, y el contraste entre la gastronomía de las élites y la comida popular.",
+    summaryEn: "The transformation of Mexican cuisine during the Porfiriato, French influence on high cuisine, and the contrast between elite gastronomy and popular food.",
+    transcript: "Transcripción completa disponible en archivos locales."
+  },
+  {
+    id: 21,
+    title: "Gastronomía Mexicana — La Resistencia al Mestizaje",
+    date: "Mar 2025",
+    tags: ["gastro"],
+    summaryEs: "El capítulo final de la serie sobre gastronomía mexicana examina cómo la cocina tradicional ha resistido la homogeneización y la comida rápida, preservando su identidad y riqueza.",
+    summaryEn: "The final chapter of the Mexican gastronomy series examines how traditional cuisine has resisted homogenization and fast food, preserving its identity and richness.",
+    transcript: "Transcripción completa disponible en archivos locales."
+  },
+  {
+    id: 22,
+    title: "La Gastronomía Mexicana en la Época de la Revolución",
+    date: "Mar 2025",
+    tags: ["gastro", "historia"],
+    summaryEs: "Segundo episodio sobre la gastronomía durante la Revolución, explorando en detalle los platillos, ingredientes y prácticas culinarias que definieron esa época convulsa.",
+    summaryEn: "Second episode on gastronomy during the Revolution, exploring in detail the dishes, ingredients, and culinary practices that defined that turbulent era.",
+    transcript: "Transcripción completa disponible en archivos locales."
+  }
+];
+
+const tagLabels = { gastro: 'Gastronomía', cine: 'Cine', historia: 'Historia', ciencia: 'Ciencia', mundo: 'Mundo' };
+
+let activeFilter = 'all';
+let activeEpisode = null;
+
+function getTagHtml(tags) {
+  return tags.map(t => `<span class="tag tag-${t}">${tagLabels[t]}</span>`).join('');
+}
+
+function renderEpisodes() {
+  const query = document.getElementById('search').value.toLowerCase();
+  const list = document.getElementById('episode-list');
+  const filtered = episodes.filter(ep => {
+    const matchFilter = activeFilter === 'all' || ep.tags.includes(activeFilter);
+    const matchSearch = !query || ep.title.toLowerCase().includes(query) || ep.summaryEs.toLowerCase().includes(query);
+    return matchFilter && matchSearch;
+  });
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<p class="no-results">No se encontraron episodios.</p>';
+    return;
+  }
+
+  list.innerHTML = filtered.map((ep, i) => `
+    <article class="episode-card" data-id="${ep.id}" onclick="openModal(${ep.id})">
+      <div class="ep-number">${String(filtered.length - i).padStart(2, '0')}</div>
+      <div class="ep-content">
+        <div class="ep-tags">${getTagHtml(ep.tags)}</div>
+        <h2 class="ep-title">${ep.title}</h2>
+        <p class="ep-summary">${ep.summaryEs}</p>
+        <p class="ep-date">${ep.date}</p>
+      </div>
+    </article>
+  `).join('');
+}
+
+function openModal(id) {
+  const ep = episodes.find(e => e.id === id);
+  activeEpisode = ep;
+
+  document.getElementById('modal-eyebrow').textContent = `Episodio ${String(id).padStart(2, '0')}`;
+  document.getElementById('modal-title').textContent = ep.title;
+  document.getElementById('modal-date').textContent = ep.date;
+  document.getElementById('modal-tags').innerHTML = `<div class="ep-tags" style="margin-bottom:0">${getTagHtml(ep.tags)}</div>`;
+  document.getElementById('summary-es').innerHTML = `<p class="modal-summary">${ep.summaryEs}</p>`;
+  document.getElementById('summary-en').innerHTML = `<p class="modal-summary">${ep.summaryEn}</p>`;
+  document.getElementById('transcript-body').innerHTML = ep.transcript.split('\n').map(p => p ? `<p style="margin-bottom:1rem">${p}</p>` : '').join('');
+  document.getElementById('transcript-body').classList.remove('open');
+  document.getElementById('transcript-toggle').textContent = 'Leer transcripción completa';
+
+  document.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.summary-content').forEach(c => c.classList.remove('active'));
+  document.querySelector('[data-lang="es"]').classList.add('active');
+  document.getElementById('summary-es').classList.add('active');
+
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderSidebar() {
+  document.getElementById('header-count').textContent = `${episodes.length} episodios en el archivo`;
+  document.getElementById('stat-episodes').textContent = episodes.length;
+  document.getElementById('stat-since').textContent = '2025';
+
+  const seriesMap = {};
+  episodes.forEach(ep => {
+    ep.tags.forEach(t => { seriesMap[t] = (seriesMap[t] || 0) + 1; });
+  });
+
+  document.getElementById('series-list').innerHTML = Object.entries(seriesMap)
+    .sort((a, b) => b[1] - a[1])
+    .map(([tag, count]) => `
+      <div class="series-item">
+        <span class="series-name">${tagLabels[tag]}</span>
+        <span class="series-count">${count} ep.</span>
+      </div>
+    `).join('');
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    renderEpisodes();
+  });
+});
+
+document.getElementById('search').addEventListener('input', renderEpisodes);
+
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+
+document.querySelectorAll('.lang-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.summary-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(`summary-${tab.dataset.lang}`).classList.add('active');
+  });
+});
+
+document.getElementById('transcript-toggle').addEventListener('click', () => {
+  const body = document.getElementById('transcript-body');
+  const btn = document.getElementById('transcript-toggle');
+  body.classList.toggle('open');
+  btn.textContent = body.classList.contains('open') ? 'Ocultar transcripción' : 'Leer transcripción completa';
+});
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+renderSidebar();
+renderEpisodes();
+</script>
+</body>
+</html>
